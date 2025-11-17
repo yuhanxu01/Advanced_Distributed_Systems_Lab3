@@ -165,17 +165,7 @@ Create 3 VM instances in Google Cloud:
 - **VM 2:** Participant A (e2-micro or higher)
 - **VM 3:** Participant B (e2-micro or higher)
 
-#### 2. Configure Firewall Rules
-
-Allow inbound traffic on ports 8001-8003:
-
-```bash
-gcloud compute firewall-rules create allow-2pc-ports \
-    --allow tcp:8001-8003 \
-    --description "Allow 2PC protocol ports"
-```
-
-#### 3. Setup Each VM
+#### 2. Setup Each VM
 
 On each VM:
 
@@ -191,7 +181,7 @@ sudo apt install python3 python3-pip -y
 cd Advanced_Distributed_Systems_Lab3
 ```
 
-#### 4. Update Configuration
+#### 3. Update Configuration
 
 Edit `config.py` on each VM with the actual IP addresses:
 
@@ -209,7 +199,7 @@ PARTICIPANT_A_HOST = '10.X.X.2'  # VM2 internal IP
 PARTICIPANT_B_HOST = '10.X.X.3'  # VM3 internal IP
 ```
 
-#### 5. Start Nodes
+#### 4. Start Nodes
 
 **On VM1 (Coordinator):**
 ```bash
@@ -226,7 +216,7 @@ python3 participant.py 2
 python3 participant.py 3
 ```
 
-#### 6. Run Tests from Any VM or Your Local Machine
+#### 5. Run Tests from Any VM or Your Local Machine
 
 Update your local `config.py` with VM IP addresses, then:
 
