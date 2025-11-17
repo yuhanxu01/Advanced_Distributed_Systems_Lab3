@@ -1,0 +1,11 @@
+# Requirements for 2PC Lab 3
+# This project uses Python standard library only
+# Python 3.6+ required
+
+# No external dependencies required
+# All functionality implemented using:
+# - xmlrpc.server (RPC server)
+# - xmlrpc.client (RPC client)
+# - threading (Lock for thread safety)
+# - logging (Logging)
+# - uuid (Transaction ID generation)
