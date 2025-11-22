@@ -1,0 +1,148 @@
+syntax = "proto3";
+
+package twopc;
+
+// Transaction types
+enum TransactionType {
+    TRANSFER = 0;      // Transfer 100 from A to B
+    BONUS = 1;         // Add 20% bonus to A and same amount to B
+}
+
+// Transaction request from client to coordinator
+message TransactionRequest {
+    string transaction_id = 1;
+    TransactionType type = 2;
+}
+
+message TransactionResponse {
+    bool success = 1;
+    string message = 2;
+    double balance_a = 3;
+    double balance_b = 4;
+}
+
+// 2PC Phase 1: Prepare request from coordinator to participant
+message PrepareRequest {
+    string transaction_id = 1;
+    TransactionType type = 2;
+    double amount = 3;           // Amount to change
+    string operation = 4;        // "withdraw", "deposit", "read"
+    double bonus_base = 5;       // For bonus transaction, the base value of A
+}
+
+message PrepareResponse {
+    bool vote = 1;               // true = commit, false = abort
+    string message = 2;
+    double current_balance = 3;  // Current balance before operation
+}
+
+// 2PC Phase 2: Commit/Abort from coordinator to participant
+message CommitRequest {
+    string transaction_id = 1;
+    bool commit = 2;             // true = commit, false = abort
+}
+
+message CommitResponse {
+    bool success = 1;
+    string message = 2;
+    double new_balance = 3;
+}
+
+// Coordinator service (for client requests)
+service CoordinatorService {
+    rpc ExecuteTransaction(TransactionRequest) returns (TransactionResponse);
+    rpc GetBalances(BalanceRequest) returns (BalanceResponse);
+    rpc SetScenario(ScenarioRequest) returns (ScenarioResponse);
+}
+
+message BalanceRequest {}
+
+message BalanceResponse {
+    double balance_a = 1;
+    double balance_b = 2;
+}
+
+message ScenarioRequest {
+    string scenario = 1;         // "normal", "crash_before", "crash_after", "coordinator_crash"
+    double initial_a = 2;
+    double initial_b = 3;
+}
+
+message ScenarioResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+// Participant service (for 2PC from coordinator)
+service ParticipantService {
+    rpc Prepare(PrepareRequest) returns (PrepareResponse);
+    rpc Commit(CommitRequest) returns (CommitResponse);
+    rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse);
+    rpc SetBalance(SetBalanceRequest) returns (SetBalanceResponse);
+    rpc SetCrashMode(CrashModeRequest) returns (CrashModeResponse);
+}
+
+message GetBalanceRequest {
+    string transaction_id = 1;
+}
+
+message GetBalanceResponse {
+    double balance = 1;
+    bool success = 2;
+}
+
+message SetBalanceRequest {
+    double balance = 1;
+}
+
+message SetBalanceResponse {
+    bool success = 1;
+}
+
+message CrashModeRequest {
+    string mode = 1;             // "none", "before_response", "after_response"
+}
+
+message CrashModeResponse {
+    bool success = 1;
+}
+
+// Raft consensus messages
+message RaftLogEntry {
+    int32 term = 1;
+    int32 index = 2;
+    string command = 3;          // JSON encoded command
+}
+
+message AppendEntriesRequest {
+    int32 term = 1;
+    string leader_id = 2;
+    int32 prev_log_index = 3;
+    int32 prev_log_term = 4;
+    repeated RaftLogEntry entries = 5;
+    int32 leader_commit = 6;
+}
+
+message AppendEntriesResponse {
+    int32 term = 1;
+    bool success = 2;
+    int32 match_index = 3;
+}
+
+message RequestVoteRequest {
+    int32 term = 1;
+    string candidate_id = 2;
+    int32 last_log_index = 3;
+    int32 last_log_term = 4;
+}
+
+message RequestVoteResponse {
+    int32 term = 1;
+    bool vote_granted = 2;
+}
+
+// Raft service
+service RaftService {
+    rpc AppendEntries(AppendEntriesRequest) returns (AppendEntriesResponse);
+    rpc RequestVote(RequestVoteRequest) returns (RequestVoteResponse);
+}
