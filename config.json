@@ -1,0 +1,36 @@
+{
+    "coordinator": {
+        "id": "node0",
+        "ip": "10.128.0.5",
+        "port": 50051
+    },
+    "participant_a": {
+        "cluster_name": "cluster_a",
+        "account": "A",
+        "nodes": [
+            {"id": "node1", "ip": "10.128.0.2", "port": 50052, "raft_port": 50062},
+            {"id": "node2", "ip": "10.128.0.3", "port": 50053, "raft_port": 50063},
+            {"id": "node4", "ip": "10.128.0.6", "port": 50054, "raft_port": 50064},
+            {"id": "node5", "ip": "10.128.0.8", "port": 50055, "raft_port": 50065},
+            {"id": "node6", "ip": "10.128.0.10", "port": 50056, "raft_port": 50066}
+        ],
+        "leader_index": 1
+    },
+    "participant_b": {
+        "cluster_name": "cluster_b",
+        "account": "B",
+        "nodes": [
+            {"id": "node3", "ip": "10.128.0.4", "port": 50057, "raft_port": 50067},
+            {"id": "node7", "ip": "10.128.0.11", "port": 50058, "raft_port": 50068},
+            {"id": "node8", "ip": "10.128.0.20", "port": 50059, "raft_port": 50069},
+            {"id": "node9", "ip": "10.128.0.21", "port": 50060, "raft_port": 50070},
+            {"id": "node10", "ip": "10.128.0.22", "port": 50061, "raft_port": 50071}
+        ],
+        "leader_index": 0
+    },
+    "timeouts": {
+        "prepare_timeout": 10,
+        "commit_timeout": 10,
+        "crash_sleep_time": 30
+    }
+}
